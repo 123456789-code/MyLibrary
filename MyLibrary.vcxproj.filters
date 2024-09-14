@@ -23,10 +23,16 @@
     <ClInclude Include="polynomial.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="print.h">
+    <ClInclude Include="mytool.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="rational.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="fsm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
