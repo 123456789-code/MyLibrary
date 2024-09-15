@@ -2,16 +2,15 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "mytool.h"
 
 template <typename _Elem, typename _int = int>
 class basic_polynomial {
 private:
 	using BP = basic_polynomial<_Elem, _int>;
 
-	constexpr std::string _To_string(_Elem e)const {
-		if constexpr (std::is_signed<_Elem>::value && std::is_integral<_Elem>::value) return std::to_string(e);
-		else return e.to_string();
-	}
+	_NODISCARD constexpr std::string _To_string(const mytool::can_be_to_string_bracket auto e)const { return std::to_string(e); }
+	_NODISCARD constexpr std::string _To_string(const mytool::can_be_dot_to_string auto e)const { return e.to_string(); }
 
 	constexpr void simplify()noexcept {
 		while (!series.empty() && series.back() == 0) series.pop_back();

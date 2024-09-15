@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 namespace mytool {
 	template <typename T, typename ... others>
@@ -64,4 +65,9 @@ namespace mytool {
 		std::reverse(cache.begin(), cache.end());
 		return cache;
 	}
+
+	template <typename T>
+	concept can_be_to_string_bracket = requires { std::to_string(T()); };
+	template <typename T>
+	concept can_be_dot_to_string = requires { T().to_string(); };
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <regex>
 #include <cassert>
+#include "mytool.h"
 
 template <typename _Elem>
 class basic_rational_number {
@@ -29,10 +30,8 @@ private:
 		if (q < 0) { p = -p; q = -q; }
 	}
 
-	_NODISCARD constexpr std::string _To_string(_Elem e)const {
-		if constexpr (std::is_signed<_Elem>::value && std::is_integral<_Elem>::value) return std::to_string(e);
-		else return e.to_string();
-	}
+	_NODISCARD constexpr std::string _To_string(const mytool::can_be_to_string_bracket auto e)const { return std::to_string(e); }
+	_NODISCARD constexpr std::string _To_string(const mytool::can_be_dot_to_string auto e)const { return e.to_string(); }
 
 public:
 	__readonly _Elem p;
@@ -48,15 +47,15 @@ public:
 	constexpr basic_rational_number(const std::string& x) {
 		if (x == "") { p = 0; q = 1; return; }
 		std::smatch match;
-		static const std::regex re("^(\\d+)/?(\\d*)$");
+		static const std::regex re("^(\\d+)(/\\d+)[0-1]$");
 		if (std::regex_search(x, match, re)) {
 			if constexpr (std::is_signed<_Elem>::value && std::is_integral<_Elem>::value) {
-				p = std::stoll(match[1].str());
-				q = std::stoll(match[2].str());
+				p = std::stoll(match[1]);
+				q = match[2].length() == 0 ? 1 : std::stoll(std::string(match[2].first + 1, match[2].second));
 			}
 			else {
 				p = match[1].str();
-				q = match[2].str();
+				q = match[2].length() == 0 ? 1 : std::string(match[2].first + 1, match[2].second);
 			}
 		}
 		assert(0);
@@ -70,8 +69,8 @@ public:
 	constexpr void operator=(BRN&& x)noexcept { q = x.q; p = x.p; }
 	_NODISCARD constexpr BRN operator-()const { return BRN(-p, q); }
 	
-	_NODISCARD constexpr bool operator==(const BRN& x)const { return q == x.q && p == x.p; }
-	_NODISCARD constexpr bool operator!=(const BRN& x)const { return q != x.q || p != x.p; }
+	_NODISCARD constexpr bool operator==(const BRN& x)const { return p == x.p && q == x.q; }
+	_NODISCARD constexpr bool operator!=(const BRN& x)const { return p != x.p || q != x.q; }
 	_NODISCARD constexpr bool operator>(const BRN& x)const { return p * x.q > x.p * q; }
 	_NODISCARD constexpr bool operator<(const BRN& x)const { return p * x.q < x.p * q; }
 	_NODISCARD constexpr bool operator>=(const BRN& x)const { return !(*this < x); }
@@ -98,8 +97,7 @@ public:
 	_NODISCARD constexpr friend BRN operator*(const _Elem& x, const BRN& y) { return BRN(x * y.p, y.q); }
 	_NODISCARD constexpr friend BRN operator/(const _Elem& x, const BRN& y) { return BRN(x * y.q, y.p); }
 
-	_NODISCARD constexpr friend BRN abs(const BRN& r) { return BRN(abs(r.p), r.q); }
-	_NODISCARD constexpr friend BRN pow(const BRN& x, const int& n) { return n == 1 ? x : x * pow(x, n - 1); }
+	_NODISCARD constexpr friend BRN abs(const BRN& x) { return BRN(abs(x.p), x.q); }
 	_NODISCARD constexpr explicit operator double() { return double(p) / double(q); }
 	_NODISCARD constexpr explicit operator float() { return float(p) / float(q); }
 	_NODISCARD constexpr explicit operator int() { assert(q == 1); return int(p); }
@@ -108,21 +106,19 @@ public:
 	_NODISCARD constexpr explicit operator bool() { return bool(p); }
 };
 	
-static const basic_rational_number<intmax_t> atto(1, 1000000000000000000LL);
-static const basic_rational_number<intmax_t> femto(1, 1000000000000000LL);
-static const basic_rational_number<intmax_t> pico(1, 1000000000000LL);
-static const basic_rational_number<intmax_t> nano(1, 1000000000);
-static const basic_rational_number<intmax_t> micro(1, 1000000);
-static const basic_rational_number<intmax_t> milli(1, 1000);
-static const basic_rational_number<intmax_t> centi(1, 100);
-static const basic_rational_number<intmax_t> deci(1, 10);
-static const basic_rational_number<intmax_t> deca(10, 1);
-static const basic_rational_number<intmax_t> hecto(100, 1);
-static const basic_rational_number<intmax_t> kilo(1000, 1);
-static const basic_rational_number<intmax_t> mega(1000000, 1);
-static const basic_rational_number<intmax_t> giga(1000000000, 1);
-static const basic_rational_number<intmax_t> tera(1000000000000LL, 1);
-static const basic_rational_number<intmax_t> peta(1000000000000000LL, 1);
-static const basic_rational_number<intmax_t> exa(1000000000000000000LL, 1);
-
-using rat = basic_rational_number<int>;
+constexpr static const basic_rational_number<intmax_t> atto(1, 1000000000000000000LL);
+constexpr static const basic_rational_number<intmax_t> femto(1, 1000000000000000LL);
+constexpr static const basic_rational_number<intmax_t> pico(1, 1000000000000LL);
+constexpr static const basic_rational_number<intmax_t> nano(1, 1000000000);
+constexpr static const basic_rational_number<intmax_t> micro(1, 1000000);
+constexpr static const basic_rational_number<intmax_t> milli(1, 1000);
+constexpr static const basic_rational_number<intmax_t> centi(1, 100);
+constexpr static const basic_rational_number<intmax_t> deci(1, 10);
+constexpr static const basic_rational_number<intmax_t> deca(10, 1);
+constexpr static const basic_rational_number<intmax_t> hecto(100, 1);
+constexpr static const basic_rational_number<intmax_t> kilo(1000, 1);
+constexpr static const basic_rational_number<intmax_t> mega(1000000, 1);
+constexpr static const basic_rational_number<intmax_t> giga(1000000000, 1);
+constexpr static const basic_rational_number<intmax_t> tera(1000000000000LL, 1);
+constexpr static const basic_rational_number<intmax_t> peta(1000000000000000LL, 1);
+constexpr static const basic_rational_number<intmax_t> exa(1000000000000000000LL, 1);

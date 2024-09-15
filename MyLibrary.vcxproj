@@ -134,6 +134,7 @@
     <ClCompile Include="MyLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="complex.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="polynomial.h" />
     <ClInclude Include="mytool.h" />
