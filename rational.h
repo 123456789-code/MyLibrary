@@ -2,7 +2,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <regex>
 #include <cassert>
 #include "mytool.h"
 
@@ -44,23 +43,9 @@ public:
 	constexpr basic_rational_number(_Elem&& x, _Elem&& y) : p(x), q(y) { simplify(); }
 	constexpr basic_rational_number(const _Elem& x) : p(x), q(1) {  }
 	constexpr basic_rational_number(_Elem&& x) : p(x), q(1) {  }
-	constexpr basic_rational_number(const std::string& x) {
-		if (x == "") { p = 0; q = 1; return; }
-		std::smatch match;
-		static const std::regex re("^(\\d+)(/\\d+)[0-1]$");
-		if (std::regex_search(x, match, re)) {
-			if constexpr (std::is_signed<_Elem>::value && std::is_integral<_Elem>::value) {
-				p = std::stoll(match[1]);
-				q = match[2].length() == 0 ? 1 : std::stoll(std::string(match[2].first + 1, match[2].second));
-			}
-			else {
-				p = match[1].str();
-				q = match[2].length() == 0 ? 1 : std::string(match[2].first + 1, match[2].second);
-			}
-		}
-		assert(0);
-	}
 	constexpr ~basic_rational_number() = default;
+
+	_NODISCARD constexpr bool is_integral()const { return q == 1; }
 
 	_NODISCARD constexpr virtual std::string to_string()const { return _To_string(p) + (q == 1 ? "" : "/" + _To_string(q)); }
 	friend inline std::ostream& operator<<(std::ostream& os, const BRN& x) { os << x.to_string(); return os; }

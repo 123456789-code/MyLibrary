@@ -2,7 +2,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <regex>
 #include <cassert>
 #include "mytool.h"
 
@@ -13,6 +12,9 @@ private:
 
 	_NODISCARD constexpr std::string _To_string(const mytool::can_be_to_string_bracket auto e)const { return std::to_string(e); }
 	_NODISCARD constexpr std::string _To_string(const mytool::can_be_dot_to_string auto e)const { return e.to_string(); }
+
+	_NODISCARD constexpr bool _Is_integral(const mytool::can_be_is_integral_bracket auto e)const { return std::is_integral(e); }
+	_NODISCARD constexpr bool _Is_integral(const mytool::can_be_dot_is_integral auto e)const { return e.is_integral(); }
 
 public:
 	__readonly _Elem a;
@@ -26,25 +28,10 @@ public:
 	constexpr basic_complex_number(_Elem&& x, _Elem&& y) : a(x), b(y) {  }
 	constexpr basic_complex_number(const _Elem& x) : a(x), b(0) {  }
 	constexpr basic_complex_number(_Elem&& x) : a(x), b(0) {  }
-	constexpr basic_complex_number(const std::string& x) {
-		if (x == "") { a = 0; b = 0; return; }
-		std::smatch match;
-		static const std::regex re("^(\\d+)(\\+\\d+i)[0-1]$");
-		if (std::regex_search(x, match, re)) {
-			if constexpr (std::is_signed<_Elem>::value && std::is_integral<_Elem>::value) {
-				a = std::stoll(match[1]);
-				b = match[2].length() == 0 ? 0 : std::stoll(std::string(match[2].first + 1, match[2].second - 1));
-			}
-			else {
-				a = match[1].str();
-				b = match[2].length() == 0 ? 0 : std::string(match[2].first + 1, match[2].second - 1);
-			}
-		}
-		assert(0);
-	}
 	constexpr ~basic_complex_number() = default;
 
-	_NODISCARD constexpr bool is_real()noexcept { return b == 0; }
+	_NODISCARD constexpr bool is_real()const { return b == 0; }
+	_NODISCARD constexpr virtual bool is_integral()const { return _Is_integral(a) && _Is_integral(b); }
 
 	_NODISCARD constexpr virtual std::string to_string()const { return (a == 0 ? "" : _To_string(a)) + (b == 0 ? "" : (b > 0 ? "+" : "") + _To_string(b) + "i"); }
 	friend inline std::ostream& operator<<(std::ostream& os, const BCN& x) { os << x.to_string(); return os; }
