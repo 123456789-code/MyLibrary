@@ -5,6 +5,7 @@
 #include "mytool.h"
 
 template <typename _Elem, typename _int = int>
+requires mytool::has_nagetive<_Elem>
 class basic_polynomial {
 private:
 	using BP = basic_polynomial<_Elem, _int>;

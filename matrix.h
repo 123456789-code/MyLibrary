@@ -3,6 +3,7 @@
 #include <cassert>
 
 template<typename _Elem, typename _int = int>
+requires mytool::has_nagetive<_Elem>
 class basic_matrix {
 private:
 	using BM = basic_matrix<_Elem, _int>;
@@ -185,6 +186,7 @@ public:
 	_NODISCARD constexpr BM inverse()const {
 		assert(sizeh() == sizev());
 		//
+		return *this;
 	}
 	_NODISCARD constexpr _Elem determinant()const {
 		assert(sizeh() == sizev());

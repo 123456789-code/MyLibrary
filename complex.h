@@ -6,15 +6,13 @@
 #include "mytool.h"
 
 template <typename _Elem>
+requires mytool::has_nagetive<_Elem>
 class basic_complex_number {
 private:
 	using BCN = basic_complex_number<_Elem>;
 
 	_NODISCARD constexpr std::string _To_string(const mytool::can_be_to_string_bracket auto e)const { return std::to_string(e); }
 	_NODISCARD constexpr std::string _To_string(const mytool::can_be_dot_to_string auto e)const { return e.to_string(); }
-
-	_NODISCARD constexpr bool _Is_integral(const mytool::can_be_is_integral_bracket auto e)const { return std::is_integral(e); }
-	_NODISCARD constexpr bool _Is_integral(const mytool::can_be_dot_is_integral auto e)const { return e.is_integral(); }
 
 public:
 	__readonly _Elem a;
@@ -31,7 +29,6 @@ public:
 	constexpr ~basic_complex_number() = default;
 
 	_NODISCARD constexpr bool is_real()const { return b == 0; }
-	_NODISCARD constexpr virtual bool is_integral()const { return _Is_integral(a) && _Is_integral(b); }
 
 	_NODISCARD constexpr virtual std::string to_string()const { return (a == 0 ? "" : _To_string(a)) + (b == 0 ? "" : (b > 0 ? "+" : "") + _To_string(b) + "i"); }
 	friend inline std::ostream& operator<<(std::ostream& os, const BCN& x) { os << x.to_string(); return os; }

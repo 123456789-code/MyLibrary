@@ -71,7 +71,7 @@ namespace mytool {
 	template <typename T>
 	concept can_be_dot_to_string = requires { T().to_string(); };
 	template <typename T>
-	concept can_be_is_integral_bracket = requires { std::is_integral(T()); };
+	concept has_mod = requires { T() % T(); };
 	template <typename T>
-	concept can_be_dot_is_integral = requires { T().is_integral(); };
+	concept has_nagetive = requires { -T(); };
 }

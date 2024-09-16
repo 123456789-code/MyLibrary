@@ -6,6 +6,7 @@
 #include "mytool.h"
 
 template <typename _Elem>
+requires mytool::has_mod<_Elem> && mytool::has_nagetive<_Elem>
 class basic_rational_number {
 private:
 	using BRN = basic_rational_number<_Elem>;
